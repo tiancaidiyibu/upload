@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input type="file" id='fileInp' accept="image/*">
+    <br>
+    <img src="" alt="" id='serverImg'>
+
+    <script src="js/md5.min.js"></script>
+    <script src="js/ajax.js"></script>
+
+    <script>
+        let limitType = ['image/jpeg','image/jpg','image/png','image/gif']
+        let limitMax = 100*1024
+        fileInp.onchange =async function  (){
+            let file = fileInp.files[0] //获取上传文件信息 { .... }
+            if(!file)return
+            console.log(file)
+            // if(!limitType.includes(file.type)){
+            //     alert('必须是XXX格式')
+            //     fileInp.value = ''
+            //     return
+            // }
+            // if(file.size>limitMax){
+            //     alert('最大只能上传100KB')
+            //     fileInp.value = ''
+            //     return
+            // }
+
+
+               
+            // formData默认设置content-type:mutilpart/form-data
+            let formData = new FormData();
+            formData.append('chunk',file);
+            formData.append('filename',$formatFileName(file.name).filename)
+            let res = await $ajax({
+                url:'http://127.0.0.1:5678/single',
+                data:formData
+            })
+            if(res.code === 0){
+                serverImg.src = res.path
+            }
+        }
+    </script>
+
+</body>
+</html>
